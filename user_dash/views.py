@@ -1,6 +1,6 @@
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+from accounts.decorators import role_required
 
-@login_required
-def dashboard(request):
+@role_required(['user'])  # Assuming 'admin' is another role you want to allow
+def dashboard_view(request):
     return HttpResponse("<html><body><h1>Hello, User!</h1></body></html>")

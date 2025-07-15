@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en" x-data="{ sidebarOpen: false }">
+<head>
+  <title>{% block title %}Dentist Portal{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-100">
+  <div class="flex min-h-screen">
+
+    <!-- Sidebar (Responsive & Collapsible) -->
+    <aside
+      class="bg-white shadow-lg w-64 px-6 py-8 flex flex-col fixed inset-y-0 z-30 transform md:translate-x-0 transition-transform duration-200 ease-in-out"
+      :class="{ '-translate-x-full': !sidebarOpen }">
+      <!-- Sidebar Header + Close on Mobile -->
+      <div class="flex items-center justify-between mb-10">
+        <div class="text-2xl font-bold text-blue-600">Dentist Portal</div>
+        <!-- Close Button (visible only on small screens) -->
+        <button
+          class="md:hidden text-gray-500 hover:text-gray-800"
+          @click="sidebarOpen = false">✕</button>
+      </div>
+      <nav class="flex-1">
+        <ul>
+          <li>
+            <a href="{% url 'dashboard' %}" class="block py-2 px-3 rounded hover:bg-blue-100 font-semibold text-gray-700">
+              🏠 Dashboard
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'manage_patients' %}" class="block py-2 px-3 rounded hover:bg-blue-100 font-semibold text-gray-700 mt-2">
+              🧑‍⚕️ Patients
+            </a>
+          </li>
+        </ul>
+      </nav>
+       <div class="mt-8">
+    <a
+      href="{% url 'logout' %}"
+      class="flex items-center px-3 py-2 rounded bg-red-50 hover:bg-red-100 text-red-600 font-semibold w-full justify-center"
+    >
+      <span class="mr-2">⎋</span> Logout
+    </a>
+  </div>
+    </aside>
+
+    <!-- Overlay for small screens when sidebar is open -->
+    <div
+      class="fixed inset-0 bg-black bg-opacity-30 z-20 md:hidden"
+      x-show="sidebarOpen"
+      x-transition.opacity
+      @click="sidebarOpen = false"
+    ></div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col ml-0 md:ml-64 transition-all duration-200">
+      <!-- Top Bar / Menu Button on Mobile -->
+      <header class="bg-white shadow px-4 py-3 flex items-center md:hidden">
+        <button
+          class="text-blue-600 focus:outline-none"
+          @click="sidebarOpen = true"
+        >
+          ☰
+        </button>
+        <h1 class="ml-4 text-lg font-semibold text-gray-700">Dashboard</h1>
+      </header>
+
+      <!-- Main Page Content -->
+      <main class="flex-grow px-4 py-6">
+        {% block content %}
+        <!-- Page-specific content -->
+        {% endblock %}
+      </main>
+    </div>
+  </div>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

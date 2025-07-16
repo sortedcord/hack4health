@@ -1,22 +1,36 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dentist Registration</title>
-</head>
-<body>
-    <h2>Register as a Dentist</h2>
-    <form method="post">
+{% extends "accounts/base.html" %}
+
+{% block title %}Register as a Dentist{% endblock %}
+
+{% block body %}
+    <h2 class="text-3xl font-bold text-blue-700 mb-2">Register as a Dentist</h2>
+    <p class="mb-6 text-gray-500">Create your professional account to manage your clinic and patients efficiently.</p>
+    <form method="post" class="space-y-4">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Register</button>
+        {{ form.non_field_errors }}
+        {% for field in form %}
+          <div>
+            <label class="block mb-1 text-gray-700 font-medium">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+              <div class="text-red-600 text-xs mt-1">{{ field.errors }}</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit"
+                class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow transition duration-200">
+          Register
+        </button>
     </form>
-    <p>Already have an account? <a href="{% url 'login' %}">Log in here</a>.</p>
+    <p class="mt-4 text-center text-gray-500">
+        Already have an account?
+        <a href="{% url 'login' %}" class="text-blue-600 hover:underline font-semibold">Log in here</a>.
+    </p>
     {% if messages %}
-        <ul>
+        <ul class="mt-4 space-y-1">
             {% for message in messages %}
-                <li>{{ message }}</li>
+                <li class="text-green-600 text-sm">{{ message }}</li>
             {% endfor %}
         </ul>
     {% endif %}
-</body>
-</html>
+{% endblock %}

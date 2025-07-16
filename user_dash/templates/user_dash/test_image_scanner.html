@@ -1,0 +1,204 @@
+{% extends "user_dash/base.html" %}
+
+{% block title %}Scan Image | Oral Health Test{% endblock %}
+{% block nav_home_active %}nav-active{% endblock %}
+
+{% block extra_head %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  #camera-feed, #captured-photo, #uploaded-preview {
+    width: 100%;
+    max-width: 360px;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+  }
+  #capture-btn, #upload-btn, #submit-uploaded-btn {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+  #zoom-slider {
+    width: 100%;
+    max-width: 360px;
+    margin-bottom: 1rem;
+    display: none;
+  }
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+  <h2 class="text-xl font-bold mb-4 text-gray-800">Scan Your Teeth</h2>
+
+  <!-- Webcam feed -->
+  <video id="camera-feed" autoplay playsinline></video>
+  <input type="range" id="zoom-slider" min="1" max="1" step="0.1" />
+
+  <!-- Captured webcam image -->
+  <canvas id="captured-photo" class="hidden"></canvas>
+  <!-- Uploaded image preview -->
+  <img id="uploaded-preview" class="hidden" alt="Uploaded Preview" />
+
+  <!-- Action buttons -->
+  <button id="capture-btn" class="bg-blue-600 text-white py-3 px-6 rounded font-semibold text-lg hover:bg-blue-700 transition">Capture from Camera</button>
+  <button id="retake-btn" class="bg-gray-200 text-gray-800 py-2 px-6 rounded font-semibold text-md hover:bg-gray-300 hidden">Retake</button>
+
+  <button id="upload-btn" class="bg-green-600 text-white py-3 px-6 rounded font-semibold text-lg hover:bg-green-700 transition">Upload Image from Device</button>
+  <button id="submit-uploaded-btn" class="bg-blue-600 text-white py-2 px-6 rounded font-semibold text-md hover:bg-blue-700 hidden">Submit Uploaded Image</button>
+  <button id="submit-captured-btn" class="bg-blue-600 text-white py-2 px-6 rounded font-semibold text-md hover:bg-blue-700 hidden">Submit Captured Image</button>
+
+
+  <!-- Hidden file input and form -->
+  <form id="upload-form" method="post" enctype="multipart/form-data" class="hidden">
+    {% csrf_token %}
+    <input type="file" id="image-input" name="image" accept="image/*" hidden>
+  </form>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const video = document.getElementById('camera-feed');
+  const canvas = document.getElementById('captured-photo');
+  const uploadedPreview = document.getElementById('uploaded-preview');
+  const captureBtn = document.getElementById('capture-btn');
+  const retakeBtn = document.getElementById('retake-btn');
+  const uploadBtn = document.getElementById('upload-btn');
+  const submitUploadedBtn = document.getElementById('submit-uploaded-btn');
+  const submitCapturedBtn = document.getElementById('submit-captured-btn');
+  const imageInput = document.getElementById('image-input');
+  const zoomSlider = document.getElementById('zoom-slider');
+
+  let videoTrack = null;
+
+  // Access webcam and setup zoom
+  function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+      .then((stream) => {
+        video.srcObject = stream;
+        videoTrack = stream.getVideoTracks()[0];
+
+        const capabilities = videoTrack.getCapabilities?.();
+        const settings = videoTrack.getSettings?.();
+
+        if (capabilities && capabilities.zoom) {
+          zoomSlider.min = capabilities.zoom.min;
+          zoomSlider.max = capabilities.zoom.max;
+          zoomSlider.step = capabilities.zoom.step || 0.1;
+          zoomSlider.value = settings.zoom || capabilities.zoom.min;
+          zoomSlider.style.display = 'block';
+
+          zoomSlider.oninput = function () {
+            const zoomLevel = parseFloat(this.value);
+            videoTrack.applyConstraints({ advanced: [{ zoom: zoomLevel }] }).catch(console.warn);
+          };
+        } else {
+          zoomSlider.style.display = 'none';
+        }
+      })
+      .catch((err) => {
+        alert('Cannot access camera: ' + err);
+      });
+  }
+
+  startCamera();
+
+  // Capture from webcam – only preview
+  captureBtn.onclick = function () {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    canvas.classList.remove('hidden');
+    video.classList.add('hidden');
+    captureBtn.classList.add('hidden');
+    retakeBtn.classList.remove('hidden');
+    submitCapturedBtn.classList.remove('hidden');
+    uploadedPreview.classList.add('hidden');
+    submitUploadedBtn.classList.add('hidden');
+  };
+
+  // Retake webcam image
+  retakeBtn.onclick = function () {
+    canvas.classList.add('hidden');
+    video.classList.remove('hidden');
+    captureBtn.classList.remove('hidden');
+    retakeBtn.classList.add('hidden');
+    submitCapturedBtn.classList.add('hidden');
+    uploadedPreview.classList.add('hidden');
+    submitUploadedBtn.classList.add('hidden');
+    imageInput.value = "";
+  };
+
+  // Upload from device
+  uploadBtn.onclick = function () {
+    imageInput.click();
+  };
+
+  // Handle uploaded image preview
+  imageInput.onchange = function (e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      uploadedPreview.src = e.target.result;
+      uploadedPreview.classList.remove('hidden');
+
+      canvas.classList.add('hidden');
+      video.classList.add('hidden');
+      captureBtn.classList.add('hidden');
+      retakeBtn.classList.add('hidden');
+      submitUploadedBtn.classList.remove('hidden');
+      submitCapturedBtn.classList.add('hidden');
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Submit uploaded image
+  submitUploadedBtn.onclick = function () {
+    const file = imageInput.files[0];
+    if (!file) return alert("Please select an image first.");
+
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+    fetch('{% url "test_image_scanner" %}', {
+      method: "POST",
+      body: formData
+    }).then(resp => {
+      if (resp.ok) {
+        alert("Image uploaded successfully!");
+        // window.location.href = '...';
+      } else {
+        alert("Error uploading image.");
+      }
+    });
+  };
+
+  // Submit captured webcam image
+  submitCapturedBtn.onclick = function () {
+    canvas.toBlob(function (blob) {
+      const file = new File([blob], "capture.jpg", { type: "image/jpeg" });
+      const formData = new FormData();
+      formData.append('image', file);
+      formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+      formData.append('test_id', '{{ test_id }}');
+
+      fetch('{% url "test_image_scanner" %}', {
+        method: "POST",
+        body: formData
+      }).then(resp => {
+        if (resp.ok) {
+          alert("Captured image uploaded successfully!");
+          // window.location.href = '...';
+        } else {
+          alert("Error uploading captured image.");
+        }
+      });
+    }, "image/jpeg", 0.95);
+  };
+</script>
+
+{% endblock %}

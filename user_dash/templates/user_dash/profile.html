@@ -1,0 +1,16 @@
+{% extends "user_dash/base.html" %}
+
+{% block title %}User Profile{% endblock %}
+{% block nav_home_active %}nav-active{% endblock %}
+
+{% block content %}
+User Profile
+
+        <form action="{% url 'logout' %}" method="post" class="inline">
+          {% csrf_token %}
+          <button type="submit"
+            class="flex items-center px-3 py-2 rounded bg-red-50 hover:bg-red-100 text-red-600 font-semibold w-full justify-center">
+            <span class="mr-2">⎋</span> Logout
+          </button>
+        </form>
+{% endblock %}

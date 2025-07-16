@@ -25,7 +25,7 @@
 
   <!-- Sticky Bottom Navigation -->
   <nav class="fixed left-0 bottom-0 w-full max-w-md mx-auto border-t bg-white flex justify-around items-center h-16 z-50">
-    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center flex-1 {% block nav_home_active %}{% endblock %}">
+    <a href="/dash/user" class="flex flex-col items-center justify-center flex-1 {% block nav_home_active %}{% endblock %}">
       <span class="nav-icon">🏠</span>
       <span class="text-xs mt-1 font-medium">Home</span>
     </a>
@@ -37,7 +37,7 @@
       <span class="nav-icon">📊</span>
       <span class="text-xs mt-1">History</span>
     </a>
-    <a href="" class="flex flex-col items-center justify-center flex-1 {% block nav_profile_active %}{% endblock %}">
+    <a href="{% url 'user_profile' %}" class="flex flex-col items-center justify-center flex-1 {% block nav_profile_active %}{% endblock %}">
       <span class="nav-icon">👤</span>
       <span class="text-xs mt-1">Profile</span>
     </a>

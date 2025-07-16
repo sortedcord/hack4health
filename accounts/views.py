@@ -42,3 +42,8 @@ def role_dashboard_redirect(request):
         return redirect('/dash/dentist')
     else:
         return redirect('/dash/user')
+
+def landing_view(request):
+    if request.user.is_authenticated:
+        return redirect('/accounts/role-redirect/')
+    return render(request, 'accounts/landing.html')

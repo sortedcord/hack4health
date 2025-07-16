@@ -43,29 +43,34 @@ function showQuestion() {
                 });
                 currentQuestion += 1;
                 showQuestion();
-            }
+            } 
             answersBox.appendChild(btn);
         });
     } else {
         submitAnswers();
     }
 }
-
 function submitAnswers() {
-    fetch('/tests/onboarding/pre-answers/', {
+    fetch("{% url 'get_pre_questions' %}", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': getCookie('csrftoken')
         },
-        body: JSON.stringify({answers: userAnswers})
+        body: JSON.stringify({ answers: userAnswers })
     }).then(response => {
-        if(response.ok) {
-            document.getElementById('onboarding-container').innerHTML =
-              '<div class="text-center text-xl font-bold">Thank you! Moving to the next step...</div>';
+        if (response.ok) {
+            return response.json();  // Get the test_id from the JSON response
         } else {
-            alert("There was an error submitting your answers. Please try again.");
+            throw new Error("Failed to submit answers.");
         }
+    }).then(data => {
+        const testId = data.test_id;
+        const nextUrl = "{% url 'test_image_scanner' %}" + `?test_id=${encodeURIComponent(testId)}`;
+        window.location.href = nextUrl;
+    }).catch(error => {
+        alert("There was an error submitting your answers. Please try again.");
+        console.error(error);
     });
 }
 

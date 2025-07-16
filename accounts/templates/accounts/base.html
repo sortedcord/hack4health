@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}Account | Dentist Portal{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center py-8">
+  <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full flex flex-col md:flex-row overflow-hidden">
+      {% block left_image %}
+      <!-- Image section (default, can override) -->
+      <div class="md:w-1/2 flex items-center justify-center bg-blue-50 p-8 md:p-12">
+          <img src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=600&q=80"
+               alt="Dentist illustration"
+               class="w-full h-64 md:h-96 object-cover rounded-lg shadow-md">
+      </div>
+      {% endblock %}
+
+      <div class="md:w-1/2 p-6 md:p-12 flex flex-col justify-center">
+          {% block body %}
+          <!-- Forms are rendered here by child templates -->
+          {% endblock %}
+      </div>
+  </div>
+  <script>
+  // Function to apply Tailwind CSS classes to all input fields
+  document.addEventListener("DOMContentLoaded", function () {
+    const inputs = document.querySelectorAll('input:not([type="submit"]):not([type="checkbox"]):not([type="radio"]), select, textarea');
+
+    inputs.forEach(input => {
+      input.classList.add(
+        'w-full',
+        'px-4',
+        'py-2',
+        'border',
+        'border-gray-300',
+        'rounded-md',
+        'bg-gray-50',
+        'focus:outline-none',
+        'focus:ring-2',
+        'focus:ring-blue-500',
+        'focus:border-blue-500',
+        'transition',
+        'duration-200'
+      );
+    });
+  });
+</script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

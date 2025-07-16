@@ -1,0 +1,90 @@
+{% extends "user_dash/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block nav_home_active %}nav-active{% endblock %}
+
+{% block content %}
+
+<div id="onboarding-container" class="max-w-md mx-auto mt-12 bg-white p-6 rounded shadow">
+  <h2 class="text-2xl font-bold mb-6 text-center">Test Onboarding</h2>
+  <div id="question-box" class="mb-6"></div>
+  <div id="answers-box" class="flex flex-col gap-3"></div>
+</div>
+
+
+<script>
+let preQuestions = [];
+let userAnswers = [];
+let currentQuestion = 0;
+
+// Fetch questions on page load
+fetch("{% url 'get_pre_questions' %}")
+  .then(response => response.json())
+  .then(data => {
+    preQuestions = data.questions || data;
+    showQuestion();
+  });
+
+function showQuestion() {
+    const questionBox = document.getElementById('question-box');
+    const answersBox = document.getElementById('answers-box');
+    answersBox.innerHTML = "";
+    if(currentQuestion < preQuestions.length) {
+        const qObj = preQuestions[currentQuestion];
+        questionBox.textContent = qObj.question;
+        qObj.answers.forEach(ans => {
+            const btn = document.createElement('button');
+            btn.textContent = ans;
+            btn.className = "w-full bg-blue-600 text-white rounded py-2 px-4 hover:bg-blue-700 font-semibold mb-2";
+            btn.onclick = () => {
+                userAnswers.push({
+                    question: qObj.question,
+                    answer: ans
+                });
+                currentQuestion += 1;
+                showQuestion();
+            }
+            answersBox.appendChild(btn);
+        });
+    } else {
+        submitAnswers();
+    }
+}
+
+function submitAnswers() {
+    fetch('/tests/onboarding/pre-answers/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({answers: userAnswers})
+    }).then(response => {
+        if(response.ok) {
+            document.getElementById('onboarding-container').innerHTML =
+              '<div class="text-center text-xl font-bold">Thank you! Moving to the next step...</div>';
+        } else {
+            alert("There was an error submitting your answers. Please try again.");
+        }
+    });
+}
+
+// CSRF helper function (same as before)
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+</script>
+
+{% endblock %}

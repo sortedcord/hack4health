@@ -1,0 +1,28 @@
+{% extends "user_dash/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block nav_home_active %}nav-active{% endblock %}
+
+{% block content %}
+<!-- Big Card/Button -->
+<div class="bg-white shadow-lg rounded-2xl p-8 flex flex-col items-center mb-8 mt-6">
+  <div class="text-2xl font-semibold text-gray-800 mb-2">Quick Health Test</div>
+  <p class="text-gray-500 mb-6 text-center">Start a new diagnostic test now. Fast, easy, private.</p>
+  <a href="{% url 'start_test' %}"
+     class="bg-blue-600 hover:bg-blue-700 text-white text-lg rounded-full px-12 py-4 shadow-lg font-bold transition-colors duration-200 min-w-[200px] text-center">
+    Test Now
+  </a>
+</div>
+
+<!-- Dashboard summary examples -->
+<div class="space-y-4">
+  <div class="bg-white rounded-xl shadow flex justify-between items-center px-6 py-4">
+    <span class="text-gray-600 font-medium">Last Test</span>
+    <span class="text-blue-600 font-bold">Normal</span>
+  </div>
+  <div class="bg-white rounded-xl shadow flex justify-between items-center px-6 py-4">
+    <span class="text-gray-600 font-medium">Next Scheduled</span>
+    <span class="text-gray-800 font-bold">No tests scheduled</span>
+  </div>
+</div>
+{% endblock %}

@@ -7,3 +7,4 @@ class CustomUser(AbstractUser):
         ('dentist', 'Dentist'),
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
+

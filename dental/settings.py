@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dentist_dash',
-    'accounts'
+    'accounts',
+    'user_dash',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [

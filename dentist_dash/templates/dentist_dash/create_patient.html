@@ -1,0 +1,64 @@
+{% extends "dentist_dash/base.html" %}
+{% load widget_tweaks %}
+
+
+{% block title %}Add New Patient{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-lg shadow p-6">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Add New Patient</h2>
+  <form method="POST">
+    {% csrf_token %}
+    
+    <!-- Username -->
+    <div class="mb-4">
+      <label for="id_username" class="block text-gray-700 font-medium mb-1">Patient ID</label>
+      {{ form.username|add_class:"w-full px-4 py-2 border border-gray-300 rounded" }}
+      {{ form.username.errors }}
+    </div>
+    
+    <!-- Email -->
+    <div class="mb-4">
+      <label for="id_email" class="block text-gray-700 font-medium mb-1">Email</label>
+      {{ form.email|add_class:"w-full px-4 py-2 border border-gray-300 rounded" }}
+      {{ form.email.errors }}
+    </div>
+
+    <!-- First Name -->
+    <div class="mb-4">
+      <label for="id_first_name" class="block text-gray-700 font-medium mb-1">First Name</label>
+      {{ form.first_name|add_class:"w-full px-4 py-2 border border-gray-300 rounded" }}
+      {{ form.first_name.errors }}
+    </div>
+
+    <!-- Last Name -->
+    <div class="mb-4">
+      <label for="id_last_name" class="block text-gray-700 font-medium mb-1">Last Name</label>
+      {{ form.last_name|add_class:"w-full px-4 py-2 border border-gray-300 rounded" }}
+      {{ form.last_name.errors }}
+    </div>
+
+    <!-- Password -->
+    <div class="mb-6">
+      <label for="id_password1" class="block text-gray-700 font-medium mb-1">Password</label>
+      {{ form.password1|add_class:"w-full px-4 py-2 border border-gray-300 rounded" }}
+      {{ form.password1.errors }}
+    </div>
+
+    <!-- Password confirm -->
+    <div class="mb-6">
+      <label for="id_password1" class="block text-gray-700 font-medium mb-1">Password Confirmation</label>
+      {{ form.password2|add_class:"w-full px-4 py-2 border border-gray-300 rounded" }}
+      {{ form.password2.errors }}
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-between">
+      <a href="{% url 'manage_patients' %}" class="text-gray-600 px-4 py-2 rounded hover:underline">Cancel</a>
+      <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-semibold">
+        Create
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

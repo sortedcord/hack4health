@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>{% block title %}User Dashboard{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .nav-active {
+      @apply text-blue-600 border-t-2 border-blue-600;
+    }
+    .nav-icon {
+      font-size: 1.5rem;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+  
+  <!-- Page Content -->
+  <main class="flex-1 pb-20 px-4 pt-6 max-w-md mx-auto w-full">
+    {% block content %}
+    <!-- Page-specific content will be injected here -->
+    {% endblock %}
+  </main>
+
+  <!-- Sticky Bottom Navigation -->
+  <nav class="fixed left-0 bottom-0 w-full max-w-md mx-auto border-t bg-white flex justify-around items-center h-16 z-50">
+    <a href="{% url 'dashboard' %}" class="flex flex-col items-center justify-center flex-1 {% block nav_home_active %}{% endblock %}">
+      <span class="nav-icon">🏠</span>
+      <span class="text-xs mt-1 font-medium">Home</span>
+    </a>
+    <a href="{% url 'user_tests' %}" class="flex flex-col items-center justify-center flex-1 {% block nav_tests_active %}{% endblock %}">
+      <span class="nav-icon">🧪</span>
+      <span class="text-xs mt-1">Tests</span>
+    </a>
+    <a href="" class="flex flex-col items-center justify-center flex-1 {% block nav_history_active %}{% endblock %}">
+      <span class="nav-icon">📊</span>
+      <span class="text-xs mt-1">History</span>
+    </a>
+    <a href="" class="flex flex-col items-center justify-center flex-1 {% block nav_profile_active %}{% endblock %}">
+      <span class="nav-icon">👤</span>
+      <span class="text-xs mt-1">Profile</span>
+    </a>
+  </nav>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

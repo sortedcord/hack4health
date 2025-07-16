@@ -1,0 +1,14 @@
+[
+    {
+        "question": "Do you have tooth pain?",
+        "answers": [
+            "Yes", "No"
+        ]
+    },
+    {
+        "question": "Do you have sharp sensitivity?",
+        "answers": [
+            "Yes", "No"
+        ]
+    }
+]

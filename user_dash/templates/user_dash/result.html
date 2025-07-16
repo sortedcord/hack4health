@@ -1,0 +1,37 @@
+<body class="bg-gray-50 min-h-screen py-10 px-4">
+  <div class="max-w-2xl mx-auto bg-white shadow-lg rounded-xl p-8 space-y-6">
+
+    <!-- Heading -->
+    <h1 class="text-3xl font-bold text-blue-700">
+      {{ report.test_id }} Test Report
+    </h1>
+
+    <!-- Score -->
+    <div class="text-5xl font-extrabold text-gray-800 text-center">
+      {{ report.final_score|default:"N/A" }}
+      <span class="text-lg block font-medium text-gray-500">Final Score</span>
+    </div>
+
+    <!-- Verified Chip -->
+    <div class="flex justify-center">
+      <span class="inline-block bg-green-100 text-green-700 text-sm font-semibold px-4 py-1 rounded-full shadow">
+        ✅ Verified
+      </span>
+    </div>
+
+    <!-- Highlights Card -->
+    <div class="border p-6 rounded-lg bg-blue-50">
+      <h2 class="text-xl font-semibold text-blue-700 mb-3">Highlights</h2>
+
+      {% if report.highlights %}
+        <ul class="list-disc list-inside space-y-1 text-gray-700">
+          {% for line in report.highlights.splitlines %}
+            <li>{{ line }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-gray-500 italic">No highlights available.</p>
+      {% endif %}
+    </div>
+
+  </div>

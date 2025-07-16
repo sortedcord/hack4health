@@ -91,3 +91,30 @@ def test_image_scanner(request):
     # Send report at 192.168.1.7:5000
     
     return render(request, 'user_dash/test_image_scanner.html', {'test_id': test_report.test_id})
+
+
+def report_details_view(request, test_id):
+    try:
+        test_report = TestReport.objects.get(test_id=test_id, user=request.user)
+        return render(request, 'user_dash/result.html', {'report': test_report})
+    except TestReport.DoesNotExist:
+        return HttpResponse("Test report not found.", status=404)
+
+def submit_report_view(request):
+    if request.method == 'POST':
+        test_id = request.POST.get('test_id')
+        test_data = request.POST.get('net-bo')
+        
+        
+        try:
+            test_report = TestReport.objects.get(test_id=test_id, user=request.user)
+            # Process the report submission logic here
+            # For example, you might want to mark it as approved or send it to a dentist
+            test_report.status = "analyzed"
+            test_report.save()
+            return JsonResponse({"message": "Report submitted successfully"}, status=200)
+        except TestReport.DoesNotExist:
+            return JsonResponse({"error": "Test report not found"}, status=404)
+    else:
+        return JsonResponse({"error": "Invalid request method"}, status=405)
+

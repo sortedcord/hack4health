@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 from accounts.views import landing_view
+from user_dash.views import submit_report_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +28,6 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('dash/user/', include('user_dash.urls')),
     path('dash/dentist/', include('dentist_dash.urls')),
+    path('/submit_report/', submit_report_view, name='submit_report'),  # Assuming this is for submitting test reports
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
